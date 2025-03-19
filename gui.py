@@ -4,6 +4,7 @@ from tkinter import simpledialog
 import heapq
 import time
 from pathfinding import PathfindingAlgorithms
+from reinforcementlearning import RLPathfinder
 
 '''
 Grid-based Pathfinding Visualiser
@@ -67,6 +68,7 @@ class VisualGridEnv:
         self.grid = [["O" for _ in range(self.grid_width)] for _ in range(self.grid_height)]
 
         self.pathfinding = PathfindingAlgorithms(self.grid, self.grid_height, self.grid_width)
+        self.reinforcementlearning = RLPathfinder(self.grid, self.grid_height, self.grid_width)
 
         self.root = tk.Tk()
         self.root.title("Grid Environment Simulator")
@@ -206,6 +208,7 @@ class VisualGridEnv:
                 self.grid = new_grid
 
                 self.pathfinding.update_grid_reference(self.grid, self.grid_height, self.grid_width)
+                self.reinforcementlearning.update_grid_reference(self.grid, self.grid_height, self.grid_width)
 
                 self.create_grid()
 
@@ -434,13 +437,17 @@ class VisualGridEnv:
         start, goal = self.find_start_and_goal()
         if start is None or goal is None:
             return
-            
         came_from = self.pathfinding.dfs(start, goal, self.visualize_exploration)
         self.reconstruct_path(came_from, start, goal, "DFS")
 
-class ReinforcementLearning:
-    def __init__(self, grid_env):
-        self.grid_env = grid_env
+# --- Reinforcement Learning ---
+
+    def RL(self):
+        self.clear_path()
+        start, goal = self.find_start_and_goal()
+        if start is None or goal is None:
+            return
+        came_from = self.reinforcementlearning.RLPathfinder(start, goal, self.visualize_exploration)
 
 if __name__ == "__main__":
     app = VisualGridEnv()
